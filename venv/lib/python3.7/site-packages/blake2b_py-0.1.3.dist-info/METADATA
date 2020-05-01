@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: blake2b-py
+Version: 0.1.3
+Summary: Blake2b hashing in Rust with Python bindings.
+Author: David Sanders <davesque@gmail.com>
+Author-Email: David Sanders <davesque@gmail.com>
+License: MIT
