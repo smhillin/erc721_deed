@@ -1,7 +1,6 @@
 pragma solidity >=0.4.21 <0.7.0;
 
 import "/Users/shaunhillin/Documents/WebstormProjects/final_project/node_modules/@openzeppelin/contracts/token/ERC721/ERC721Full.sol";
-import "/Users/shaunhillin/Documents/WebstormProjects/final_project/node_modules/@openzeppelin/contracts/token/ERC721/ERC721Metadata.sol";
 
 
 contract CountyClerkRepo is ERC721Full {
@@ -12,6 +11,7 @@ contract CountyClerkRepo is ERC721Full {
         bool owned;
         uint256 accountNumber;
         uint256[] chain;
+        uint owners;
     }
 
     // mapping from deedid to DeedInfo
@@ -46,7 +46,7 @@ contract CountyClerkRepo is ERC721Full {
         require(deeds[_tokenId].owned != false);
         changeDeedOwner(_tokenId, _name);
         //increase account number by 1
-        //TODO Support for chain of titlte
+        nextAccount += 1;
         emit DeedUpdate(msg.sender, _tokenId, deeds[_tokenId].name);
     }
 
@@ -70,6 +70,10 @@ contract CountyClerkRepo is ERC721Full {
         return(deeds[_tokenId].accountNumber);
     }
 
+    function retrieveChainTitle(uint256 _tokenId) public view returns(uint256[] memory){
+        return(deeds[_tokenId].chain);
+    }
+
     //functions returns the id of the next available
     function addDeedData(uint256 _tokenId, string memory _name, string memory _address) public {
         DeedInfo memory d;
@@ -77,29 +81,22 @@ contract CountyClerkRepo is ERC721Full {
         d.propAddress = _address;
         d.owned = true;
         d.accountNumber = nextAccount;
+        d.owners = 1;
         deeds[_tokenId] = d;
         deeds[_tokenId].chain.push(nextAccount);
-        nextAccount += 1;
-
-
-
-//        deeds[_tokenId]= DeedInfo({
-//            name: _name,
-//            propAddress: _address,
-//            owned: true,
-//            accountNumber: nextAccount,
-//            chain: new uint256[](0) memory
-//        });
-//        deeds[_tokenId].chain.push(nextAccount);
-//        nextAccount += 1;
     }
+
+
     //updates owner, adds old owner to chain of title, and references new account number
     function changeDeedOwner(uint256 _tokenId, string memory _name) public {
         //push new account number to chain
         deeds[_tokenId].chain.push(nextAccount);
         deeds[_tokenId].name= _name;
         deeds[_tokenId].accountNumber = nextAccount;
+        emit DeedUpdate(msg.sender, _tokenId, deeds[_tokenId].name);
     }
+
+        //given a token id return chainofTitle
 
 
     event DeedUpdate(address _by, uint256 _tokenId, string _name);

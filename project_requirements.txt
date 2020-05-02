@@ -1,10 +1,18 @@
 Following the syllabus please submit by May 4th:
 
-the code for the Final Project (approximately 2 Solidity contracts for 10%)
-a demo (a notebook and/or presentation for 5%)
-please 'market' your idea lightly: does your project involve intermediaries?
-why does your project require Blockchain?
-a summary of your project (5%)
-extra effort beyond the above (5% extra credit)
+- the code for the Final Project (approximately 2 Solidity contracts for 10%)
+
+https://github.com/smhillin/erc721_deed
+
+- a demo (a notebook and/or presentation for 5%)
+
+- please 'market' your idea lightly: does your project involve intermediaries?
+
+- why does your project require Blockchain?
+
+- a summary of your project (5%)
+
+- extra effort beyond the above (5% extra credit)
+
 additionally: if you would like your work presented please state that you would like your work presented
 if you would like your work presented, let us know if you would not mind the staff presenting your project in upcoming/other Blockchain classes (with credit given to you)

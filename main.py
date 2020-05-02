@@ -86,17 +86,21 @@ class CountyClerk():
         owner = self.ci.functions.retrieveDeedOwner(token_id).call()
         address = self.ci.functions.retrieveDeedAddress(token_id).call()
         print("{0} was registered to {1}".format(owner, address))
+        return(token_id)
 
-    def changeDeed(self,owner):
-
-        token_id = self.w3.eth.accounts[0]
-        token_id = int(token_id, 16)
-        self.ci.functions.changeDeedOwner(token_id, owner).transact()
+    def changeDeed(self,token_id,owner):
+        #change the owner on the deed
+        self.ci.functions.changeDeed(token_id, owner).transact()
         owner = self.ci.functions.retrieveDeedOwner(token_id).call()
         address = self.ci.functions.retrieveDeedAddress(token_id).call()
         print("Deed name was changed to {0} at {1}".format(owner, address))
+        return (token_id)
 
-#test class for testing deed creation
+    def chainOfTitle(self, token_id):
+        chain=self.ci.functions.retrieveChainTitle(token_id).call()
+        return(chain)
+
+# test class for testing deed creation
 class DeedCreateTest(unittest.TestCase):
     def test_new_deed(self):
         path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
@@ -106,7 +110,7 @@ class DeedCreateTest(unittest.TestCase):
             county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
             self.assertEqual(solidity_out.getvalue(), expected_out)
 
-    #create 2 new deeds
+    # create 2 new deeds
     def test_2_new_deeds(self):
         path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
         county_clerk = CountyClerk(path)
@@ -119,31 +123,42 @@ class DeedCreateTest(unittest.TestCase):
             county_clerk.createNewDeed("Tina Hillin", "1904 Jones Rd")
             self.assertEqual(solidity_out.getvalue(), expected_out)
 
-    # def test_creating_existing_deed_fail(self):
-    #     path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
-    #     county_clerk = CountyClerk(path)
-    #     county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
-    #     with self.assertRaises(Exception):
-    #         county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
-
-    #test to change name on deed
+    # test to change name on deed
     def test_change_deed(self):
         path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
         county_clerk = CountyClerk(path)
         expected_out = "Shaun Hillin was registered to 1904 Smith Rd\n"
         with patch('sys.stdout', new=StringIO()) as solidity_out:
-            county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
+            token_id=county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
             self.assertEqual(solidity_out.getvalue(), expected_out)
         expected_out = "Deed name was changed to Tina Hillin at 1904 Smith Rd\n"
         with patch('sys.stdout', new=StringIO()) as solidity_out:
-            county_clerk.changeDeed("Tina Hillin")
+            county_clerk.changeDeed(token_id,"Tina Hillin")
             self.assertEqual(solidity_out.getvalue(), expected_out)
 
+    # test to add change the title multiple times and then add print chain of title
+    def test_chain_of_title(self):
+        path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+        county_clerk = CountyClerk(path)
+        expected_out = "[0, 1, 2]\n"
+        token_id = county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
+        token_id = county_clerk.changeDeed(token_id,"Tina Hillin")
+        token_id = county_clerk.changeDeed(token_id, "Mila Daisy")
+        with patch('sys.stdout', new=StringIO()) as solidity_out:
+            chain = county_clerk.chainOfTitle(token_id)
+            print(chain)
+            self.assertEqual(solidity_out.getvalue(), expected_out)
 
 def main():
-    unittest.main()
-
-
+    path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+    county_clerk = CountyClerk(path)
+    token_id = county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
+    token_id = county_clerk.changeDeed(token_id, "Tina Hillin")
+    token_id = county_clerk.changeDeed(token_id, "Mila Hillin")
+    token_id = county_clerk.changeDeed(token_id, "Daisy Hillin")
+    chain = county_clerk.chainOfTitle(token_id)
+    print(chain)
 
 if __name__ == '__main__':
-    main()
+    unittest.main()
+    #main()
