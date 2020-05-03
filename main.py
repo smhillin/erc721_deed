@@ -15,7 +15,7 @@ set_solc_version('v0.5.5')
 #environment variables
 contract="contracts/CountyClerkRepo.sol"
 zepplin_directory="node_modules/@openzeppelin/"
-chain_info = 'http://127.0.0.1:8545'
+chain_info = 'http://127.0.0.1:7545'
 
 
 cwd = os.getcwd()
