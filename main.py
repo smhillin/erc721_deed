@@ -12,21 +12,32 @@ install_solc('v0.5.5')
 
 set_solc_version('v0.5.5')
 
+#environment variables
+contract="contracts/CountyClerkRepo.sol"
+zepplin_directory="node_modules/@openzeppelin/"
+chain_info = 'http://127.0.0.1:8545'
 
 
+cwd = os.getcwd()
+contract_path = os.path.join(cwd,contract)
 
+
+#used to create a contract interface
 def get_contract_interface(input_str, contract_source_code):
     # Solidity Compiler
     max_gas = 5000000
     gas = {'gas': 5000000}
-    compiled_sol = compile_files([contract_source_code], \
-                                 import_remappings=[
-                                     "zeppeling=/Users/shaunhillin/Documents/WebstormProjects/final_project/node_modules/@openzeppelin/"])  # Compiled source code
+    #get zepplin mappings
+    zepplin_dir= os.path.join(cwd,zepplin_directory)
+    zepplin_dir= "zeppeling="+zepplin_dir
+    compiled_sol = compile_files([contract_source_code],
+                                 import_remappings=[zepplin_dir])
+    # Compiled source code
     key = contract_source_code + ':' + input_str
     contract_interface = compiled_sol[key]
 
     # web3.py instance ganache
-    w3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
+    w3 = Web3(HTTPProvider(chain_info))
 
     # set pre-funded account as sender
     w3.eth.defaultAccount = w3.eth.accounts[0]
@@ -103,7 +114,7 @@ class CountyClerk():
 # test class for testing deed creation
 class DeedCreateTest(unittest.TestCase):
     def test_new_deed(self):
-        path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+        path = contract_path
         county_clerk = CountyClerk(path)
         expected_out = "Shaun Hillin was registered to 1904 Smith Rd\n"
         with patch('sys.stdout', new=StringIO()) as solidity_out:
@@ -112,7 +123,7 @@ class DeedCreateTest(unittest.TestCase):
 
     # create 2 new deeds
     def test_2_new_deeds(self):
-        path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+        path = contract_path
         county_clerk = CountyClerk(path)
         expected_out = "Shaun Hillin was registered to 1904 Smith Rd\n"
         with patch('sys.stdout', new=StringIO()) as solidity_out:
@@ -125,7 +136,7 @@ class DeedCreateTest(unittest.TestCase):
 
     # test to change name on deed
     def test_change_deed(self):
-        path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+        path = contract_path
         county_clerk = CountyClerk(path)
         expected_out = "Shaun Hillin was registered to 1904 Smith Rd\n"
         with patch('sys.stdout', new=StringIO()) as solidity_out:
@@ -138,7 +149,7 @@ class DeedCreateTest(unittest.TestCase):
 
     # test to add change the title multiple times and then add print chain of title
     def test_chain_of_title(self):
-        path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+        path = contract_path
         county_clerk = CountyClerk(path)
         expected_out = "[0, 1, 2]\n"
         token_id = county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
@@ -150,7 +161,7 @@ class DeedCreateTest(unittest.TestCase):
             self.assertEqual(solidity_out.getvalue(), expected_out)
 
 def main():
-    path = "/Users/shaunhillin/Documents/WebstormProjects/final_project/contracts/CountyClerkRepo.sol"
+    path = contract_path
     county_clerk = CountyClerk(path)
     token_id = county_clerk.createNewDeed("Shaun Hillin", "1904 Smith Rd")
     token_id = county_clerk.changeDeed(token_id, "Tina Hillin")

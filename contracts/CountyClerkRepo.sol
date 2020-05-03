@@ -1,6 +1,6 @@
 pragma solidity >=0.4.21 <0.7.0;
 
-import "/Users/shaunhillin/Documents/WebstormProjects/final_project/node_modules/@openzeppelin/contracts/token/ERC721/ERC721Full.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/ERC721Full.sol";
 
 
 contract CountyClerkRepo is ERC721Full {
